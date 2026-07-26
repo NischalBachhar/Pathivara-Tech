@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, MouseEvent } from "react";
 
 const Arrow = ({ diagonal = false }: { diagonal?: boolean }) => (
   <svg aria-hidden="true" className="arrow-icon" viewBox="0 0 24 24" fill="none">
@@ -30,6 +30,30 @@ function Preloader({ loading }: { loading: boolean }) {
       <span className="loader-caption">LOADING THE FUTURE</span>
     </div>
   );
+}
+
+function revealVisibleItems() {
+  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
+    const bounds = item.getBoundingClientRect();
+    if (bounds.top < window.innerHeight && bounds.bottom > 0) {
+      item.classList.add("visible");
+    }
+  });
+}
+
+function revealAllItems() {
+  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
+    item.classList.add("visible");
+  });
+}
+
+function scrollToSection(event: MouseEvent<HTMLAnchorElement>, sectionId: string) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+
+  event.preventDefault();
+  window.history.pushState({}, "", `/#${sectionId}`);
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function Header() {
@@ -100,10 +124,10 @@ function Hero() {
             technology.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#future">
+            <a className="button button-primary" href="/#future" onClick={(event) => scrollToSection(event, "future")}>
               Explore the future <Arrow />
             </a>
-            <a className="video-link" href="#work">
+            <a className="video-link" href="/#work" onClick={(event) => scrollToSection(event, "work")}>
               <span className="video-button"><i /></span>
               See what we create
             </a>
@@ -885,7 +909,7 @@ function Work() {
             title="Digital experiences designed for the way people live and work."
             copy="A glimpse of the product directions we can shape around your organisation, users, and growth goals."
           />
-          <a className="button button-primary reveal reveal-up" href="#contact">Build yours <Arrow /></a>
+          <a className="button button-primary reveal reveal-up" href="/#contact" onClick={(event) => scrollToSection(event, "contact")}>Build yours <Arrow /></a>
         </div>
         <div className="concept-grid">
           {concepts.map(([label, title, detail, image], index) => (
@@ -1421,9 +1445,10 @@ export default function App() {
   const [activePage, setActivePage] = useState<"about" | "contact" | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const shouldRevealRestoredHomeRef = useRef(false);
 
   useEffect(() => {
-    const updatePageFromUrl = () => {
+    const updatePageFromUrl = (fromHistory = false) => {
       const parameters = new URLSearchParams(window.location.search);
       const technologySlug = parameters.get("technology");
       const serviceSlug = parameters.get("service");
@@ -1434,6 +1459,10 @@ export default function App() {
       const validService = servicePages.some((service) => service.slug === serviceSlug);
       const validPage = page === "about" || page === "contact";
 
+      if (fromHistory && !validPage && !validTechnology && !validService) {
+        shouldRevealRestoredHomeRef.current = true;
+      }
+
       setActivePage(validPage ? page : null);
       setActiveTechnology(!validPage && validTechnology ? technologySlug : null);
       setActiveService(!validPage && !validTechnology && validService ? serviceSlug : null);
@@ -1441,27 +1470,14 @@ export default function App() {
     };
 
     updatePageFromUrl();
-    window.addEventListener("popstate", updatePageFromUrl);
+    const onPopState = () => updatePageFromUrl(true);
+    window.addEventListener("popstate", onPopState);
 
     document.body.classList.add("site-loading");
     const loaderTimer = window.setTimeout(() => {
       setLoading(false);
       document.body.classList.remove("site-loading");
     }, 1650);
-
-    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 },
-    );
-    revealItems.forEach((item) => observer.observe(item));
 
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -1490,19 +1506,59 @@ export default function App() {
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.addEventListener("pointerover", onPointerOver, { passive: true });
     document.documentElement.addEventListener("mouseleave", onPointerLeave);
+
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) window.requestAnimationFrame(revealAllItems);
+    };
+    window.addEventListener("pageshow", onPageShow);
     onScroll();
 
     return () => {
       window.clearTimeout(loaderTimer);
-      observer.disconnect();
-      window.removeEventListener("popstate", updatePageFromUrl);
+      window.removeEventListener("popstate", onPopState);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerover", onPointerOver);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
+      window.removeEventListener("pageshow", onPageShow);
       document.body.classList.remove("site-loading");
     };
   }, []);
+
+  useEffect(() => {
+    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
+
+    if (
+      shouldRevealRestoredHomeRef.current
+      && !activePage
+      && !activeTechnology
+      && !activeService
+    ) {
+      revealAllItems();
+      shouldRevealRestoredHomeRef.current = false;
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+    const revealFrame = window.requestAnimationFrame(revealVisibleItems);
+
+    return () => {
+      window.cancelAnimationFrame(revealFrame);
+      observer.disconnect();
+    };
+  }, [activePage, activeTechnology, activeService]);
 
   const openTechnology = (slug: string) => {
     window.history.pushState({}, "", `/?technology=${slug}`);
@@ -1513,6 +1569,7 @@ export default function App() {
 
   const closeTechnology = () => {
     window.history.pushState({}, "", "/#future");
+    shouldRevealRestoredHomeRef.current = true;
     setActiveTechnology(null);
     window.setTimeout(() => {
       document.getElementById("future")?.scrollIntoView({ behavior: "smooth" });
@@ -1532,6 +1589,7 @@ export default function App() {
 
   const closeService = () => {
     window.history.pushState({}, "", "/#services");
+    shouldRevealRestoredHomeRef.current = true;
     setActiveService(null);
     window.setTimeout(() => {
       document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
