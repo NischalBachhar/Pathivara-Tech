@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { FormEvent, MouseEvent } from "react";
+import type { FormEvent, PointerEvent as ReactPointerEvent } from "react";
 
 const Arrow = ({ diagonal = false }: { diagonal?: boolean }) => (
   <svg aria-hidden="true" className="arrow-icon" viewBox="0 0 24 24" fill="none">
@@ -47,12 +47,25 @@ function revealAllItems() {
   });
 }
 
-function scrollToSection(event: MouseEvent<HTMLAnchorElement>, sectionId: string) {
+function scrollToSection(event: ReactPointerEvent<HTMLAnchorElement>, sectionId: string) {
+  if (
+    event.button !== 0
+    || !event.isPrimary
+    || event.altKey
+    || event.ctrlKey
+    || event.metaKey
+    || event.shiftKey
+  ) {
+    return;
+  }
+
   const section = document.getElementById(sectionId);
   if (!section) return;
 
   event.preventDefault();
-  window.history.pushState({}, "", `/#${sectionId}`);
+  if (window.location.hash !== `#${sectionId}` || window.location.search) {
+    window.history.pushState({}, "", `/#${sectionId}`);
+  }
   section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -124,10 +137,10 @@ function Hero() {
             technology.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="/#future" onClick={(event) => scrollToSection(event, "future")}>
+            <a className="button button-primary" href="/#future" onPointerDown={(event) => scrollToSection(event, "future")}>
               Explore the future <Arrow />
             </a>
-            <a className="video-link" href="/#work" onClick={(event) => scrollToSection(event, "work")}>
+            <a className="video-link" href="/#work" onPointerDown={(event) => scrollToSection(event, "work")}>
               <span className="video-button"><i /></span>
               See what we create
             </a>
@@ -909,7 +922,7 @@ function Work() {
             title="Digital experiences designed for the way people live and work."
             copy="A glimpse of the product directions we can shape around your organisation, users, and growth goals."
           />
-          <a className="button button-primary reveal reveal-up" href="/#contact" onClick={(event) => scrollToSection(event, "contact")}>Build yours <Arrow /></a>
+          <a className="button button-primary reveal reveal-up" href="/#contact" onPointerDown={(event) => scrollToSection(event, "contact")}>Build yours <Arrow /></a>
         </div>
         <div className="concept-grid">
           {concepts.map(([label, title, detail, image], index) => (
