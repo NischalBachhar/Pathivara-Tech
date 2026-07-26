@@ -32,6 +32,25 @@ function Preloader({ loading }: { loading: boolean }) {
   );
 }
 
+function revealVisibleItems() {
+  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
+    const bounds = item.getBoundingClientRect();
+    if (bounds.top < window.innerHeight && bounds.bottom > 0) {
+      item.classList.add("visible");
+    }
+  });
+}
+
+function scrollToSection(event: React.MouseEvent<HTMLAnchorElement>, sectionId: string) {
+  event.preventDefault();
+
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+
+  window.history.pushState({}, "", `/#${sectionId}`);
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -99,10 +118,10 @@ function Hero() {
             technology.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#future">
+            <a className="button button-primary" href="/#future" onClick={(event) => scrollToSection(event, "future")}>
               Explore the future <Arrow />
             </a>
-            <a className="video-link" href="#work">
+            <a className="video-link" href="/#work" onClick={(event) => scrollToSection(event, "work")}>
               <span className="video-button"><i /></span>
               See what we create
             </a>
@@ -1124,20 +1143,6 @@ export default function App() {
       document.body.classList.remove("site-loading");
     }, 1650);
 
-    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 },
-    );
-    revealItems.forEach((item) => observer.observe(item));
-
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const ratio = max > 0 ? window.scrollY / max : 0;
@@ -1165,19 +1170,53 @@ export default function App() {
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.addEventListener("pointerover", onPointerOver, { passive: true });
     document.documentElement.addEventListener("mouseleave", onPointerLeave);
+
+    // A browser can restore this document from its back/forward cache without
+    // remounting React. Restore visible sections instead of leaving them in
+    // their initial hidden reveal state.
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) window.requestAnimationFrame(revealVisibleItems);
+    };
+    window.addEventListener("pageshow", onPageShow);
     onScroll();
 
     return () => {
       window.clearTimeout(loaderTimer);
-      observer.disconnect();
       window.removeEventListener("popstate", updatePageFromUrl);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerover", onPointerOver);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
+      window.removeEventListener("pageshow", onPageShow);
       document.body.classList.remove("site-loading");
     };
   }, []);
+
+  // Technology and service detail pages replace the homepage in the DOM.
+  // Recreate the observer when a view changes so restored sections animate
+  // correctly after browser Back navigation.
+  useEffect(() => {
+    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+    const revealFrame = window.requestAnimationFrame(revealVisibleItems);
+
+    return () => {
+      window.cancelAnimationFrame(revealFrame);
+      observer.disconnect();
+    };
+  }, [activeTechnology, activeService]);
 
   const openTechnology = (slug: string) => {
     window.history.pushState({}, "", `/?technology=${slug}`);
