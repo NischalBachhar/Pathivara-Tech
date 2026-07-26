@@ -99,14 +99,22 @@ function Header() {
           </button>
           <nav className={menuOpen ? "nav open" : "nav"} aria-label="Main navigation">
             {[
-              ["Home", "/#top"],
+              ["Home", "/#top", "top"],
               ["About", "/?page=about"],
-              ["Services", "/#services"],
-              ["Future Tech", "/#future"],
-              ["Our Work", "/#work"],
+              ["Services", "/#services", "services"],
+              ["Future Tech", "/#future", "future"],
+              ["Our Work", "/#work", "work"],
               ["Contact", "/?page=contact"],
-            ].map(([label, href]) => (
-              <a href={href} key={href} onClick={() => setMenuOpen(false)}>
+            ].map(([label, href, sectionId]) => (
+              <a
+                href={href}
+                key={href}
+                onClick={() => setMenuOpen(false)}
+                onPointerDown={sectionId ? (event) => {
+                  setMenuOpen(false);
+                  scrollToSection(event, sectionId);
+                } : undefined}
+              >
                 {label}
               </a>
             ))}
@@ -1479,7 +1487,12 @@ export default function App() {
       setActivePage(validPage ? page : null);
       setActiveTechnology(!validPage && validTechnology ? technologySlug : null);
       setActiveService(!validPage && !validTechnology && validService ? serviceSlug : null);
-      window.scrollTo({ top: 0, behavior: "auto" });
+
+      // Keep hash destinations such as /#future intact. Detail and standalone
+      // pages should still open at their own top edge.
+      if (validPage || validTechnology || validService) {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
     };
 
     updatePageFromUrl();
