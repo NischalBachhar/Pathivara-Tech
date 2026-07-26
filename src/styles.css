@@ -1550,6 +1550,11 @@ img {
   max-width: 710px;
 }
 
+.service-detail-hero .technology-hero-copy h1 {
+  font-size: clamp(54px, 6vw, 92px);
+  line-height: 0.96;
+}
+
 .technology-hero-lede {
   color: rgba(255, 255, 255, 0.72);
   font-size: clamp(18px, 1.7vw, 23px);
@@ -1803,6 +1808,14 @@ img {
   gap: 27px;
   grid-template-columns: 34px 1fr;
   padding: 30px 0;
+}
+
+.service-deliverables .technology-life-list > div {
+  padding: 22px 0;
+}
+
+.service-deliverables .technology-life-list p {
+  font-size: 17px;
 }
 
 .technology-life-list span {

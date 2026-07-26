@@ -32,15 +32,6 @@ function Preloader({ loading }: { loading: boolean }) {
   );
 }
 
-function revealVisibleItems() {
-  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
-    const bounds = item.getBoundingClientRect();
-    if (bounds.top < window.innerHeight && bounds.bottom > 0) {
-      item.classList.add("visible");
-    }
-  });
-}
-
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -245,13 +236,133 @@ function About() {
   );
 }
 
-const services = [
-  ["01", "Web Development", "Fast, scalable websites and web platforms that explain, perform, and convert.", "browser"],
-  ["02", "App Development", "Intuitive mobile and cross-platform products built around real customer journeys.", "mobile"],
-  ["03", "Custom Software", "Connected systems and automation shaped around the way your business actually works.", "code"],
-  ["04", "UI/UX Design", "Research, prototypes, interfaces, and design systems that make complexity feel simple.", "design"],
-  ["05", "Digital Marketing", "Search, content, social, and campaigns designed to turn attention into growth.", "growth"],
-  ["06", "IT Consulting & IoT", "Practical technology strategy, connected devices, cloud systems, and long-term support.", "network"],
+const servicePages = [
+  {
+    slug: "web-development",
+    number: "01",
+    title: "Web Development",
+    label: "Websites and web platforms",
+    icon: "browser",
+    short: "Fast, scalable websites and web platforms that explain, perform, and convert.",
+    hero: "Build a professional digital home that earns trust, explains your value, and helps visitors take the next step.",
+    simple: "Web development turns your business goals and information into a website or browser-based platform that people can use on phones, tablets, and computers. It includes structure, design, coding, performance, security, testing, and launch.",
+    analogy: "Think of a website as your worldwide office, showroom, salesperson, and help desk combined. Unlike a physical location, it can welcome people and answer important questions at any time.",
+    image: "/concept-commerce.png",
+    outcomes: [
+      ["Create a stronger first impression", "Present your business clearly and professionally so potential customers understand why they should trust you."],
+      ["Generate enquiries or sales", "Guide visitors toward useful actions such as calling, booking, buying, requesting a quote, or visiting a location."],
+      ["Work well on every device", "Give customers a fast, accessible experience whether they arrive from a phone, laptop, tablet, or search engine."],
+      ["Make future growth easier", "Use a maintainable foundation that can expand with new pages, languages, integrations, products, or customer tools."],
+    ],
+    deliverables: ["Business and audience discovery", "Content structure and page planning", "Responsive visual design", "Front-end and back-end development", "Forms, analytics, SEO, and integrations", "Testing, launch, training, and support"],
+    bestFor: ["Company websites", "E-commerce", "Booking platforms", "Customer portals", "Membership sites", "Custom web applications"],
+    firstStep: "Clarify who the website must serve, what visitors need to understand, and the most valuable action they should take.",
+  },
+  {
+    slug: "app-development",
+    number: "02",
+    title: "App Development",
+    label: "Mobile and cross-platform products",
+    icon: "mobile",
+    short: "Intuitive mobile and cross-platform products built around real customer journeys.",
+    hero: "Put a useful service directly into your customer’s or employee’s pocket with an app designed around real needs.",
+    simple: "App development creates software for phones, tablets, and sometimes desktops. An app can help people order, book, communicate, pay, learn, track activity, manage work, or use a connected service.",
+    analogy: "A good app is like giving each user a small, personalised branch of your business that travels with them and remembers what they need.",
+    image: "/concept-mobile.png",
+    outcomes: [
+      ["Stay closer to customers", "Offer convenient access, personalised information, updates, and services without asking people to visit a website repeatedly."],
+      ["Simplify employee work", "Give teams one focused tool for field activity, delivery, approvals, reporting, communication, or customer service."],
+      ["Create repeat engagement", "Use useful features, saved preferences, notifications, and progress tracking to give people a reason to return."],
+      ["Connect digital and physical services", "Bring together payments, maps, cameras, sensors, QR codes, wearables, or business systems in one experience."],
+    ],
+    deliverables: ["User and market research", "Feature planning and prototype", "Android and iOS experience design", "App and API development", "Payments, notifications, maps, or device features", "Store launch, monitoring, and improvement"],
+    bestFor: ["Customer service apps", "Delivery and logistics", "Bookings and marketplaces", "Internal workforce tools", "Health and education", "Connected products"],
+    firstStep: "Identify the one repeated customer or employee task that becomes noticeably easier when it is available on a phone.",
+  },
+  {
+    slug: "custom-software",
+    number: "03",
+    title: "Custom Software",
+    label: "Systems built around your operation",
+    icon: "code",
+    short: "Connected systems and automation shaped around the way your business actually works.",
+    hero: "Replace scattered spreadsheets, repeated manual work, and disconnected tools with software designed for your operation.",
+    simple: "Custom software is built specifically for the way your organisation works. It can manage customers, orders, inventory, staff, approvals, reporting, finance, production, or any process that normal ready-made software cannot handle well.",
+    analogy: "Off-the-shelf software is like buying a standard uniform. Custom software is tailored to fit your workflow, connect the tools you already use, and leave room for growth.",
+    image: "/concept-dashboard.png",
+    outcomes: [
+      ["Reduce repeated manual work", "Automate calculations, data entry, document creation, notifications, assignments, and routine process steps."],
+      ["See the whole operation", "Bring important information into dashboards and reports instead of searching across chats, files, and spreadsheets."],
+      ["Improve consistency and control", "Use clear permissions, validation, status tracking, and audit history so work follows agreed rules."],
+      ["Connect existing systems", "Allow websites, apps, accounting, inventory, payments, customer tools, and external services to exchange information."],
+    ],
+    deliverables: ["Workflow and requirements analysis", "System architecture and database design", "Dashboard and interface design", "Secure application development", "Integrations and data migration", "Testing, training, support, and improvements"],
+    bestFor: ["Operations management", "Inventory and order systems", "CRM and customer portals", "Workflow automation", "Reporting platforms", "Industry-specific systems"],
+    firstStep: "Map the current process, identify where time or information is lost, and choose one workflow where improvement will create clear value.",
+  },
+  {
+    slug: "ui-ux-design",
+    number: "04",
+    title: "UI/UX Design",
+    label: "Clear and useful digital experiences",
+    icon: "design",
+    short: "Research, prototypes, interfaces, and design systems that make complexity feel simple.",
+    hero: "Make websites, apps, and software easier to understand, more pleasant to use, and better aligned with real people.",
+    simple: "User experience (UX) design decides how a digital product should work and feel. User interface (UI) design shapes what people see and interact with—such as screens, buttons, forms, navigation, colour, type, and visual feedback.",
+    analogy: "UX is the floor plan and journey through a building; UI is the signs, lighting, furniture, and controls that help people move through it confidently.",
+    image: "/pathivara-ar-studio.png",
+    outcomes: [
+      ["Make products easier to use", "Organise information and actions around how people naturally think instead of how the internal system is organised."],
+      ["Reduce confusion and support requests", "Use clear language, predictable interaction, and helpful feedback so users can complete tasks confidently."],
+      ["Increase conversion and adoption", "Remove unnecessary steps and hesitation from purchasing, registering, booking, enquiring, or completing work."],
+      ["Create a consistent brand experience", "Build reusable design rules and components so every screen feels connected and professional."],
+    ],
+    deliverables: ["User interviews and journey mapping", "Information architecture", "Wireframes and interactive prototypes", "Visual interface design", "Usability testing", "Design systems and developer handoff"],
+    bestFor: ["New digital products", "Website redesigns", "Complex business software", "Mobile applications", "E-commerce journeys", "Design system creation"],
+    firstStep: "Choose an important user journey, observe where people hesitate or fail, and redesign that experience before expanding to every screen.",
+  },
+  {
+    slug: "digital-marketing",
+    number: "05",
+    title: "Digital Marketing",
+    label: "Attention that turns into growth",
+    icon: "growth",
+    short: "Search, content, social, and campaigns designed to turn attention into growth.",
+    hero: "Reach the right audience with a clear message, then guide attention toward measurable enquiries, sales, and relationships.",
+    simple: "Digital marketing uses search engines, social media, content, email, advertising, websites, and data to help people discover and choose a business. Effective marketing connects the audience, message, offer, and customer journey.",
+    analogy: "It is not simply shouting louder online. It is choosing the right street, placing the right sign, speaking to the right person, and making the next step easy.",
+    image: "/concept-commerce.png",
+    outcomes: [
+      ["Reach relevant people", "Focus content and campaigns on audiences who are more likely to need, value, and purchase your offer."],
+      ["Build trust before the sale", "Use helpful content, proof, stories, and consistent communication to make the business easier to understand."],
+      ["Generate measurable demand", "Connect ads, search, social content, landing pages, and follow-up so attention can become enquiries or revenue."],
+      ["Learn what works", "Track meaningful results and improve messages, audiences, pages, and spending instead of relying only on assumptions."],
+    ],
+    deliverables: ["Market and competitor review", "Brand message and campaign strategy", "SEO and content planning", "Social media and creative campaigns", "Paid advertising and landing pages", "Analytics, reporting, and optimisation"],
+    bestFor: ["Brand launches", "Local and international growth", "Lead generation", "E-commerce sales", "Community building", "Customer retention"],
+    firstStep: "Define the most valuable audience, the problem you solve for them, and the action that represents real business success.",
+  },
+  {
+    slug: "it-consulting-iot",
+    number: "06",
+    title: "IT Consulting & IoT",
+    label: "Practical technology direction",
+    icon: "network",
+    short: "Practical technology strategy, connected devices, cloud systems, and long-term support.",
+    hero: "Make confident technology decisions and connect physical operations to useful, secure digital information.",
+    simple: "IT consulting helps a business choose, improve, secure, and organise its technology. IoT connects physical devices such as sensors, machines, vehicles, meters, or appliances to software so they can report information or respond to approved commands.",
+    analogy: "Consulting creates the map and priorities. IoT gives physical operations eyes and ears. Cloud systems act as the control room where information becomes alerts, dashboards, and decisions.",
+    image: "/pathivara-future-stack.png",
+    outcomes: [
+      ["Choose technology with confidence", "Compare options, risks, costs, and long-term impact before investing in systems or infrastructure."],
+      ["Improve reliability and security", "Review architecture, access, backups, cloud services, integrations, and operational risks."],
+      ["Monitor physical operations remotely", "Use connected devices to understand location, energy, temperature, equipment, stock, or environmental conditions."],
+      ["Create a realistic technology roadmap", "Prioritise improvements in stages so the organisation gains value without unnecessary disruption."],
+    ],
+    deliverables: ["Technology audit and roadmap", "Architecture and vendor guidance", "Cloud and security planning", "IoT feasibility and sensor selection", "Dashboards, alerts, and integrations", "Implementation oversight and ongoing support"],
+    bestFor: ["Growing organisations", "System modernisation", "Manufacturing and logistics", "Agriculture and cold chains", "Smart buildings", "Connected products"],
+    firstStep: "Begin with the business risk or opportunity, review the current environment, and prioritise the smallest improvement that produces useful evidence.",
+  },
 ];
 
 function LineIcon({ type }: { type: string }) {
@@ -270,7 +381,7 @@ function LineIcon({ type }: { type: string }) {
   );
 }
 
-function Services() {
+function Services({ onSelect }: { onSelect: (slug: string) => void }) {
   return (
     <section className="section services-section" id="services">
       <div className="services-dots" aria-hidden="true" />
@@ -284,18 +395,168 @@ function Services() {
           <a className="button button-outline reveal reveal-up" href="#contact">View all services <Arrow /></a>
         </div>
         <div className="services-grid">
-          {services.map(([number, title, copy, icon], index) => (
-            <article className="service-card reveal reveal-up" style={{ "--delay": `${index * 70}ms` } as React.CSSProperties} key={number}>
-              <div className="service-icon"><LineIcon type={icon} /></div>
-              <span className="service-number">{number}</span>
-              <h3>{title}</h3>
-              <p>{copy}</p>
-              <a href="#contact">Explore service <Arrow /></a>
+          {servicePages.map((service, index) => (
+            <article className="service-card reveal reveal-up" style={{ "--delay": `${index * 70}ms` } as React.CSSProperties} key={service.slug}>
+              <div className="service-icon"><LineIcon type={service.icon} /></div>
+              <span className="service-number">{service.number}</span>
+              <h3>{service.title}</h3>
+              <p>{service.short}</p>
+              <a
+                href={`/?service=${service.slug}`}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onSelect(service.slug);
+                }}
+              >
+                Explore service <Arrow />
+              </a>
             </article>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+type Service = (typeof servicePages)[number];
+
+function ServicePage({
+  service,
+  onBack,
+}: {
+  service: Service;
+  onBack: () => void;
+}) {
+  return (
+    <>
+      <Header />
+      <section className="technology-hero service-detail-hero" id="top">
+        <div className="technology-grid-bg" aria-hidden="true" />
+        <div className="shell technology-hero-layout">
+          <div className="technology-hero-copy">
+            <a
+              className="technology-back"
+              href="/#services"
+              onClick={(event) => {
+                event.preventDefault();
+                onBack();
+              }}
+            >
+              <span>←</span> All IT services
+            </a>
+            <p className="section-label section-label-light">
+              <span /> Service {service.number} · {service.label}
+            </p>
+            <h1>{service.title}</h1>
+            <p className="technology-hero-lede">{service.hero}</p>
+            <div className="technology-hero-actions">
+              <a className="button button-coral" href="/#contact">
+                Discuss your project <Arrow />
+              </a>
+              <a className="technology-jump" href="#service-explanation">
+                See what is included <span>↓</span>
+              </a>
+            </div>
+          </div>
+          <div className="technology-hero-visual">
+            <img src={service.image} alt={`${service.title} service concept`} />
+            <span className="technology-visual-grid" aria-hidden="true" />
+            <div className="technology-signal signal-a"><i /> STRATEGY</div>
+            <div className="technology-signal signal-b"><i /> EXPERIENCE</div>
+            <div className="technology-signal signal-c"><i /> DELIVERY</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-simple" id="service-explanation">
+        <div className="shell technology-simple-grid">
+          <div>
+            <p className="section-label"><span /> Clear explanation</p>
+            <h2>What does {service.title} include?</h2>
+          </div>
+          <div className="technology-explanation">
+            <p>{service.simple}</p>
+            <aside>
+              <span>Think of it like this</span>
+              <p>{service.analogy}</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-benefits">
+        <div className="shell">
+          <div className="technology-section-heading">
+            <div>
+              <p className="section-label"><span /> Business outcomes</p>
+              <h2>What this service can improve.</h2>
+            </div>
+            <p>
+              We connect the technical work to customer experience, operational
+              improvement, and the result your organisation actually needs.
+            </p>
+          </div>
+          <div className="technology-benefit-grid">
+            {service.outcomes.map(([title, copy], index) => (
+              <article key={title}>
+                <span>0{index + 1}</span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-life service-deliverables">
+        <div className="shell technology-life-grid">
+          <div className="technology-life-copy">
+            <p className="section-label section-label-light"><span /> Typical deliverables</p>
+            <h2>What we can plan and deliver together.</h2>
+            <p>
+              The exact scope depends on your organisation, audience, existing
+              systems, budget, and priorities. We define it clearly before
+              development begins.
+            </p>
+          </div>
+          <div className="technology-life-list">
+            {service.deliverables.map((item, index) => (
+              <div key={item}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <p>{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-fit">
+        <div className="shell technology-fit-grid">
+          <div>
+            <p className="section-label"><span /> A good fit for</p>
+            <h2>Projects and organisations we can support.</h2>
+            <div className="technology-tags">
+              {service.bestFor.map((item) => <span key={item}>{item}</span>)}
+            </div>
+          </div>
+          <aside className="technology-first-step">
+            <span>THE PRACTICAL FIRST STEP</span>
+            <h3>Understand the goal before choosing features.</h3>
+            <p>{service.firstStep}</p>
+            <a href="/#contact">Plan the first step <Arrow /></a>
+          </aside>
+        </div>
+      </section>
+
+      <section className="technology-page-cta">
+        <div className="shell">
+          <p>Considering {service.title}?</p>
+          <h2>Let&apos;s define the right scope for your business.</h2>
+          <a className="button button-coral" href="/#contact">Start a conversation <Arrow /></a>
+        </div>
+      </section>
+      <Footer />
+    </>
   );
 }
 
@@ -835,25 +1096,47 @@ function Footer() {
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [activeTechnology, setActiveTechnology] = useState<string | null>(null);
+  const [activeService, setActiveService] = useState<string | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const updateTechnologyFromUrl = () => {
-      const slug = new URLSearchParams(window.location.search).get("technology");
-      const isValid = technologyPages.some((technology) => technology.slug === slug);
-      setActiveTechnology(isValid ? slug : null);
+    const updatePageFromUrl = () => {
+      const parameters = new URLSearchParams(window.location.search);
+      const technologySlug = parameters.get("technology");
+      const serviceSlug = parameters.get("service");
+      const validTechnology = technologyPages.some(
+        (technology) => technology.slug === technologySlug,
+      );
+      const validService = servicePages.some((service) => service.slug === serviceSlug);
+
+      setActiveTechnology(validTechnology ? technologySlug : null);
+      setActiveService(!validTechnology && validService ? serviceSlug : null);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
 
-    updateTechnologyFromUrl();
-    window.addEventListener("popstate", updateTechnologyFromUrl);
+    updatePageFromUrl();
+    window.addEventListener("popstate", updatePageFromUrl);
 
     document.body.classList.add("site-loading");
     const loaderTimer = window.setTimeout(() => {
       setLoading(false);
       document.body.classList.remove("site-loading");
     }, 1650);
+
+    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+    revealItems.forEach((item) => observer.observe(item));
 
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -882,57 +1165,23 @@ export default function App() {
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.addEventListener("pointerover", onPointerOver, { passive: true });
     document.documentElement.addEventListener("mouseleave", onPointerLeave);
-
-    // A browser can restore this document from its back/forward cache without
-    // remounting React. Make sure restored, in-view sections cannot remain
-    // stuck in the initial hidden reveal state.
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) window.requestAnimationFrame(revealVisibleItems);
-    };
-    window.addEventListener("pageshow", onPageShow);
     onScroll();
 
     return () => {
       window.clearTimeout(loaderTimer);
-      window.removeEventListener("popstate", updateTechnologyFromUrl);
+      observer.disconnect();
+      window.removeEventListener("popstate", updatePageFromUrl);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerover", onPointerOver);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
-      window.removeEventListener("pageshow", onPageShow);
       document.body.classList.remove("site-loading");
     };
   }, []);
 
-  // Technology pages replace the homepage in the DOM. Recreate the observer
-  // after each view change so sections restored through browser Back are not
-  // left in their initial, hidden `.reveal` state.
-  useEffect(() => {
-    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 },
-    );
-
-    revealItems.forEach((item) => observer.observe(item));
-    // IntersectionObserver callbacks can be delayed after a history restore.
-    // Reveal the currently visible items synchronously on the next frame.
-    const revealFrame = window.requestAnimationFrame(revealVisibleItems);
-    return () => {
-      window.cancelAnimationFrame(revealFrame);
-      observer.disconnect();
-    };
-  }, [activeTechnology]);
-
   const openTechnology = (slug: string) => {
     window.history.pushState({}, "", `/?technology=${slug}`);
+    setActiveService(null);
     setActiveTechnology(slug);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -949,12 +1198,31 @@ export default function App() {
     (technology) => technology.slug === activeTechnology,
   );
 
+  const openService = (slug: string) => {
+    window.history.pushState({}, "", `/?service=${slug}`);
+    setActiveTechnology(null);
+    setActiveService(slug);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const closeService = () => {
+    window.history.pushState({}, "", "/#services");
+    setActiveService(null);
+    window.setTimeout(() => {
+      document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
+    }, 0);
+  };
+
+  const selectedService = servicePages.find((service) => service.slug === activeService);
+
   return (
     <main>
       <Preloader loading={loading} />
       <div className="scroll-progress" ref={progressRef} />
       <div className="custom-cursor" ref={cursorRef} aria-hidden="true"><span /></div>
-      {selectedTechnology ? (
+      {selectedService ? (
+        <ServicePage service={selectedService} onBack={closeService} />
+      ) : selectedTechnology ? (
         <TechnologyPage technology={selectedTechnology} onBack={closeTechnology} />
       ) : (
         <>
@@ -962,7 +1230,7 @@ export default function App() {
           <Hero />
           <Marquee />
           <About />
-          <Services />
+          <Services onSelect={openService} />
           <FutureTech onSelect={openTechnology} />
           <Work />
           <Metrics />
