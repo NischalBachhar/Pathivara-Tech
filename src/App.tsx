@@ -32,31 +32,6 @@ function Preloader({ loading }: { loading: boolean }) {
   );
 }
 
-function revealVisibleItems() {
-  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
-    const bounds = item.getBoundingClientRect();
-    if (bounds.top < window.innerHeight && bounds.bottom > 0) {
-      item.classList.add("visible");
-    }
-  });
-}
-
-function revealAllItems() {
-  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
-    item.classList.add("visible");
-  });
-}
-
-function scrollToSection(event: React.MouseEvent<HTMLAnchorElement>, sectionId: string) {
-  event.preventDefault();
-
-  const section = document.getElementById(sectionId);
-  if (!section) return;
-
-  window.history.pushState({}, "", `/#${sectionId}`);
-  section.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -88,16 +63,17 @@ function Header() {
           <nav className={menuOpen ? "nav open" : "nav"} aria-label="Main navigation">
             {[
               ["Home", "/#top"],
-              ["About", "/#about"],
+              ["About", "/?page=about"],
               ["Services", "/#services"],
               ["Future Tech", "/#future"],
               ["Our Work", "/#work"],
+              ["Contact", "/?page=contact"],
             ].map(([label, href]) => (
               <a href={href} key={href} onClick={() => setMenuOpen(false)}>
                 {label}
               </a>
             ))}
-            <a className="header-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
+            <a className="header-cta" href="/?page=contact" onClick={() => setMenuOpen(false)}>
               Start your project <Arrow />
             </a>
           </nav>
@@ -124,10 +100,10 @@ function Hero() {
             technology.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="/#future" onClick={(event) => scrollToSection(event, "future")}>
+            <a className="button button-primary" href="#future">
               Explore the future <Arrow />
             </a>
-            <a className="video-link" href="/#work" onClick={(event) => scrollToSection(event, "work")}>
+            <a className="video-link" href="#work">
               <span className="video-button"><i /></span>
               See what we create
             </a>
@@ -1095,6 +1071,325 @@ function Contact() {
   );
 }
 
+const teamMembers = [
+  {
+    name: "Nischal Bachhar",
+    role: "CEO",
+    image: "/team-nischal-bachhar.jpg",
+    position: "team-position-nischal",
+    bio: "Guides company direction, client partnerships, and accountable delivery from idea to launch.",
+  },
+  {
+    name: "Gaurab Neupane",
+    role: "Full-stack Developer",
+    image: "/team-gaurab-neupane.png",
+    position: "team-position-gaurab",
+    bio: "Builds dependable front-end and back-end systems that connect product experience, data, and business workflows.",
+  },
+  {
+    name: "Sujana Shrestha",
+    role: "UI/UX Designer",
+    image: "/team-sujana-shrestha.jpg",
+    position: "team-position-sujana",
+    bio: "Shapes clear, accessible user journeys and interfaces that make complex products feel simple.",
+  },
+  {
+    name: "Sofiya Gajurel",
+    role: "Marketing Director",
+    image: "/team-sofiya-gajurel.jpg",
+    position: "team-position-sofiya",
+    bio: "Connects brand strategy, audience insight, content, and campaigns to meaningful business growth.",
+  },
+  {
+    name: "Sushmita Shrestha",
+    role: "Quality Assurance",
+    image: "/team-sushmita-shrestha.png",
+    position: "team-position-sushmita",
+    bio: "Protects product quality through careful testing, edge-case thinking, and continuous feedback throughout delivery.",
+  },
+];
+
+const agileSteps = [
+  ["01", "Discover", "We listen first—clarifying the business goal, audience, users, priorities, and technical context."],
+  ["02", "Plan together", "We agree on a useful first release, transparent priorities, and a practical roadmap."],
+  ["03", "Build in short sprints", "Design, development, and testing move in focused one-to-two-week cycles with visible progress."],
+  ["04", "Demo and improve", "You review working results regularly, share feedback, and help shape the next sprint."],
+  ["05", "Launch with confidence", "Continuous quality checks, a careful release, and ongoing Kanban support keep the product improving."],
+];
+
+function ContactIcon({ type }: { type: "whatsapp" | "phone" | "email" | "address" }) {
+  const icons: Record<string, React.ReactNode> = {
+    whatsapp: (
+      <>
+        <path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.7l1.2-4.1A8 8 0 1 1 20 11.5Z" />
+        <path d="M8.2 8.2c.4 3.2 2.2 5 5.5 5.6l1.3-1.4 2.1 1c-.2 1.4-1.2 2.5-2.7 2.6-4.5-.3-8-3.8-8.3-8.3.1-1.5 1.2-2.5 2.6-2.7l1 2.1-1.5 1.1Z" />
+      </>
+    ),
+    phone: (
+      <path d="M7.2 3.7 10 7.1 8.6 9.3c1.2 2.5 3.1 4.4 5.6 5.6l2.2-1.4 3.4 2.8-.8 3c-.3 1-1.2 1.7-2.2 1.7C9.2 20.4 3.6 14.8 3 7.2c0-1 .7-1.9 1.7-2.2l2.5-1.3Z" />
+    ),
+    email: (
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m4 7 8 6 8-6" />
+      </>
+    ),
+    address: (
+      <>
+        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </>
+    ),
+  };
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.55">
+      {icons[type]}
+    </svg>
+  );
+}
+
+function CompanyDetails() {
+  return (
+    <div className="company-detail-grid">
+      <a href="https://wa.me/9779827717843" target="_blank" rel="noreferrer">
+        <div className="company-detail-top"><i><ContactIcon type="whatsapp" /></i><span>WhatsApp</span></div>
+        <strong>+977 9827717843</strong>
+        <small>Message our team ↗</small>
+      </a>
+      <a href="tel:+9779827717843">
+        <div className="company-detail-top"><i><ContactIcon type="phone" /></i><span>Phone</span></div>
+        <strong>+977 9827717843</strong>
+        <small>Call Pathivara Tech</small>
+      </a>
+      <a href="mailto:Techpathivara@gmail.com">
+        <div className="company-detail-top"><i><ContactIcon type="email" /></i><span>Email</span></div>
+        <strong>Techpathivara@gmail.com</strong>
+        <small>Tell us about your project ↗</small>
+      </a>
+      <div>
+        <div className="company-detail-top"><i><ContactIcon type="address" /></i><span>Address</span></div>
+        <strong>Mandikhatar, Kathmandu, Nepal</strong>
+        <small>Serving clients worldwide</small>
+      </div>
+    </div>
+  );
+}
+
+function AboutPage() {
+  return (
+    <>
+      <Header />
+      <section className="about-page-hero" id="top">
+        <div className="about-page-grid-bg" aria-hidden="true" />
+        <div className="shell about-page-hero-grid">
+          <div className="about-page-hero-copy">
+            <a className="page-back-link" href="/#about"><span>←</span> Back to home</a>
+            <p className="section-label"><span /> About Pathivara Tech</p>
+            <h1>Built precisely.<br /><em>Evolved together.</em></h1>
+            <p>
+              We are a Kathmandu-based technology startup building websites,
+              apps, custom software, digital experiences, and emerging-technology
+              solutions for organisations worldwide.
+            </p>
+            <div className="about-page-actions">
+              <a className="button button-primary" href="/?page=contact">Start a project <Arrow /></a>
+              <a className="about-page-text-link" href="#our-team">Meet the team <span>↓</span></a>
+            </div>
+          </div>
+          <div className="startup-tech-visual" aria-label="Pathivara Tech innovation system">
+            <div className="tech-system-panel">
+              <div className="tech-system-head">
+                <span>PATHIVARA / BUILD SYSTEM</span>
+                <i><b /></i>
+              </div>
+              <div className="tech-system-stage">
+                <span className="tech-system-grid" aria-hidden="true" />
+                <span className="tech-ring tech-ring-outer" aria-hidden="true" />
+                <span className="tech-ring tech-ring-inner" aria-hidden="true" />
+                <div className="tech-core">
+                  <span className="tech-core-logo" aria-hidden="true" />
+                  <small>Human-led</small>
+                  <strong>Innovation</strong>
+                </div>
+                <span className="tech-node tech-node-ai"><i />AI</span>
+                <span className="tech-node tech-node-spatial"><i />AR / VR</span>
+                <span className="tech-node tech-node-cloud"><i />CLOUD</span>
+                <span className="tech-node tech-node-chain"><i />BLOCKCHAIN</span>
+                <span className="tech-node tech-node-product"><i />PRODUCT</span>
+                <span className="tech-scan-line" aria-hidden="true" />
+              </div>
+              <div className="tech-system-footer">
+                <span><i /> Strategy connected</span>
+                <span><i /> Quality active</span>
+                <strong>GLOBAL / READY</strong>
+              </div>
+            </div>
+            <div className="startup-flow-card">
+              <span>STARTUP DELIVERY</span>
+              <div><strong>Idea</strong><i>→</i><strong>Build</strong><i>→</i><strong>Launch</strong></div>
+              <small>Short sprints · Clear feedback · Continuous improvement</small>
+            </div>
+            <div className="innovation-stat-card">
+              <span>ONE CONNECTED TEAM</span>
+              <strong>Strategy + Design + Engineering</strong>
+              <i><b /><b /><b /><b /></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section startup-story">
+        <div className="shell startup-story-grid">
+          <div>
+            <p className="section-label"><span /> Our company</p>
+            <h2>A startup mindset with disciplined delivery.</h2>
+          </div>
+          <div className="startup-story-copy">
+            <p>
+              Pathivara Tech was created to make professional technology work
+              more precise, more transparent, and easier for customers to
+              understand. We combine startup speed with a smooth, structured
+              way of working so good ideas can become dependable products.
+            </p>
+            <p>
+              Customer interaction is part of the work—not an update saved for
+              the end. We share progress, explain decisions in plain language,
+              listen carefully to feedback, and adjust priorities while the
+              product is being built.
+            </p>
+          </div>
+        </div>
+        <div className="shell company-values-grid">
+          {[
+            ["Precision", "Careful thinking, clear requirements, thoughtful design, clean engineering, and dependable quality.", "/value-precision.webp"],
+            ["Partnership", "Open communication and shared decisions keep the product aligned with the people it must serve.", "/value-partnership.webp"],
+            ["Useful innovation", "We adopt modern technology when it creates a practical advantage—not simply because it is new.", "/value-innovation.webp"],
+            ["Continuous improvement", "Launch is a beginning. We learn from real use and improve the product in sensible stages.", "/value-improvement.webp"],
+          ].map(([title, copy, image]) => (
+            <article key={title}>
+              <div className="value-card-image">
+                <img src={image} alt={`${title} illustrated with a modern technology concept`} />
+              </div>
+              <div className="value-card-copy">
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section agile-section">
+        <div className="shell agile-grid">
+          <div className="agile-intro">
+            <p className="section-label section-label-light"><span /> How we deliver</p>
+            <h2>Practical Agile, shaped around your project.</h2>
+            <p>
+              We use short Agile sprints for planned product delivery and a
+              Kanban approach for support and continuous improvements. This
+              keeps progress visible, feedback timely, and priorities flexible
+              without losing quality or direction.
+            </p>
+            <div className="agile-note">
+              <strong>Why it works</strong>
+              <span>You see working progress early and can guide the product before assumptions become expensive.</span>
+            </div>
+          </div>
+          <div className="agile-steps">
+            {agileSteps.map(([number, title, copy]) => (
+              <article key={number}>
+                <span>{number}</span>
+                <div><h3>{title}</h3><p>{copy}</p></div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section team-section" id="our-team">
+        <div className="shell">
+          <div className="team-heading">
+            <div>
+              <p className="section-label"><span /> Our team</p>
+              <h2>The people behind Pathivara Tech.</h2>
+            </div>
+            <p>
+              Strategy, design, engineering, marketing, and quality stay
+              connected so customers work with one accountable team.
+            </p>
+          </div>
+          <div className="team-grid">
+            {teamMembers.map((member) => (
+              <article className="team-card" key={member.name}>
+                <div className="team-photo">
+                  <img className={member.position} src={member.image} alt={`${member.name}, ${member.role} at Pathivara Tech`} />
+                </div>
+                <div className="team-card-copy">
+                  <small>{member.role}</small>
+                  <h3>{member.name}</h3>
+                  <p>{member.bio}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section company-details-section">
+        <div className="shell">
+          <div className="company-details-heading">
+            <p className="section-label"><span /> Company details</p>
+            <h2>Close communication.<br />Worldwide ambition.</h2>
+          </div>
+          <CompanyDetails />
+        </div>
+      </section>
+
+      <section className="about-page-cta">
+        <div className="shell">
+          <p>Have an idea, challenge, or process to improve?</p>
+          <h2>Let&apos;s build the next useful version together.</h2>
+          <a className="button button-coral" href="/?page=contact">Contact Pathivara Tech <Arrow /></a>
+        </div>
+      </section>
+      <Footer />
+    </>
+  );
+}
+
+function ContactPage() {
+  return (
+    <>
+      <Header />
+      <section className="contact-page-hero" id="top">
+        <div className="contact-page-grid-bg" aria-hidden="true" />
+        <div className="shell contact-page-hero-grid">
+          <div>
+            <a className="page-back-link page-back-link-light" href="/#top"><span>←</span> Back to home</a>
+            <p className="section-label section-label-light"><span /> Contact Pathivara Tech</p>
+            <h1>Let&apos;s build something useful together.</h1>
+          </div>
+          <p>
+            Whether you need a website, app, custom system, digital strategy,
+            or an emerging-technology prototype, tell us what you want to make
+            better. We&apos;ll help define a practical first step.
+          </p>
+        </div>
+      </section>
+      <section className="contact-page-details">
+        <div className="shell">
+          <CompanyDetails />
+        </div>
+      </section>
+      <div className="contact-page-content">
+        <Contact />
+      </div>
+      <Footer />
+    </>
+  );
+}
+
 function Footer() {
   return (
     <footer className="footer">
@@ -1104,10 +1399,11 @@ function Footer() {
           <p>From digital foundations to immersive futures.</p>
         </div>
         <div className="footer-links">
-          <a href="/#about">About</a>
+          <a href="/?page=about">About</a>
           <a href="/#services">Services</a>
           <a href="/#future">Future Tech</a>
           <a href="/#work">Our Work</a>
+          <a href="/?page=contact">Contact</a>
         </div>
       </div>
       <div className="shell footer-bottom">
@@ -1122,38 +1418,50 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [activeTechnology, setActiveTechnology] = useState<string | null>(null);
   const [activeService, setActiveService] = useState<string | null>(null);
+  const [activePage, setActivePage] = useState<"about" | "contact" | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
-  const shouldRevealRestoredHomeRef = useRef(false);
 
   useEffect(() => {
-    const updatePageFromUrl = (fromHistory = false) => {
+    const updatePageFromUrl = () => {
       const parameters = new URLSearchParams(window.location.search);
       const technologySlug = parameters.get("technology");
       const serviceSlug = parameters.get("service");
+      const page = parameters.get("page");
       const validTechnology = technologyPages.some(
         (technology) => technology.slug === technologySlug,
       );
       const validService = servicePages.some((service) => service.slug === serviceSlug);
+      const validPage = page === "about" || page === "contact";
 
-      if (fromHistory && !validTechnology && !validService) {
-        shouldRevealRestoredHomeRef.current = true;
-      }
-
-      setActiveTechnology(validTechnology ? technologySlug : null);
-      setActiveService(!validTechnology && validService ? serviceSlug : null);
+      setActivePage(validPage ? page : null);
+      setActiveTechnology(!validPage && validTechnology ? technologySlug : null);
+      setActiveService(!validPage && !validTechnology && validService ? serviceSlug : null);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
 
     updatePageFromUrl();
-    const onPopState = () => updatePageFromUrl(true);
-    window.addEventListener("popstate", onPopState);
+    window.addEventListener("popstate", updatePageFromUrl);
 
     document.body.classList.add("site-loading");
     const loaderTimer = window.setTimeout(() => {
       setLoading(false);
       document.body.classList.remove("site-loading");
     }, 1650);
+
+    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+    revealItems.forEach((item) => observer.observe(item));
 
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -1182,64 +1490,19 @@ export default function App() {
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.addEventListener("pointerover", onPointerOver, { passive: true });
     document.documentElement.addEventListener("mouseleave", onPointerLeave);
-
-    // A browser can restore this document from its back/forward cache without
-    // remounting React. Restore visible sections instead of leaving them in
-    // their initial hidden reveal state.
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) window.requestAnimationFrame(revealAllItems);
-    };
-    window.addEventListener("pageshow", onPageShow);
     onScroll();
 
     return () => {
       window.clearTimeout(loaderTimer);
-      window.removeEventListener("popstate", onPopState);
+      observer.disconnect();
+      window.removeEventListener("popstate", updatePageFromUrl);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerover", onPointerOver);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
-      window.removeEventListener("pageshow", onPageShow);
       document.body.classList.remove("site-loading");
     };
   }, []);
-
-  // Technology and service detail pages replace the homepage in the DOM.
-  // Recreate the observer when a view changes so restored sections animate
-  // correctly after browser Back navigation.
-  useEffect(() => {
-    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
-
-    if (
-      shouldRevealRestoredHomeRef.current
-      && !activeTechnology
-      && !activeService
-    ) {
-      revealAllItems();
-      shouldRevealRestoredHomeRef.current = false;
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 },
-    );
-
-    revealItems.forEach((item) => observer.observe(item));
-    const revealFrame = window.requestAnimationFrame(revealVisibleItems);
-
-    return () => {
-      window.cancelAnimationFrame(revealFrame);
-      observer.disconnect();
-    };
-  }, [activeTechnology, activeService]);
 
   const openTechnology = (slug: string) => {
     window.history.pushState({}, "", `/?technology=${slug}`);
@@ -1250,7 +1513,6 @@ export default function App() {
 
   const closeTechnology = () => {
     window.history.pushState({}, "", "/#future");
-    shouldRevealRestoredHomeRef.current = true;
     setActiveTechnology(null);
     window.setTimeout(() => {
       document.getElementById("future")?.scrollIntoView({ behavior: "smooth" });
@@ -1270,7 +1532,6 @@ export default function App() {
 
   const closeService = () => {
     window.history.pushState({}, "", "/#services");
-    shouldRevealRestoredHomeRef.current = true;
     setActiveService(null);
     window.setTimeout(() => {
       document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
@@ -1284,7 +1545,11 @@ export default function App() {
       <Preloader loading={loading} />
       <div className="scroll-progress" ref={progressRef} />
       <div className="custom-cursor" ref={cursorRef} aria-hidden="true"><span /></div>
-      {selectedService ? (
+      {activePage === "about" ? (
+        <AboutPage />
+      ) : activePage === "contact" ? (
+        <ContactPage />
+      ) : selectedService ? (
         <ServicePage service={selectedService} onBack={closeService} />
       ) : selectedTechnology ? (
         <TechnologyPage technology={selectedTechnology} onBack={closeTechnology} />
