@@ -32,6 +32,15 @@ function Preloader({ loading }: { loading: boolean }) {
   );
 }
 
+function revealVisibleItems() {
+  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
+    const bounds = item.getBoundingClientRect();
+    if (bounds.top < window.innerHeight && bounds.bottom > 0) {
+      item.classList.add("visible");
+    }
+  });
+}
+
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -846,20 +855,6 @@ export default function App() {
       document.body.classList.remove("site-loading");
     }, 1650);
 
-    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 },
-    );
-    revealItems.forEach((item) => observer.observe(item));
-
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const ratio = max > 0 ? window.scrollY / max : 0;
@@ -887,19 +882,54 @@ export default function App() {
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.addEventListener("pointerover", onPointerOver, { passive: true });
     document.documentElement.addEventListener("mouseleave", onPointerLeave);
+
+    // A browser can restore this document from its back/forward cache without
+    // remounting React. Make sure restored, in-view sections cannot remain
+    // stuck in the initial hidden reveal state.
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) window.requestAnimationFrame(revealVisibleItems);
+    };
+    window.addEventListener("pageshow", onPageShow);
     onScroll();
 
     return () => {
       window.clearTimeout(loaderTimer);
-      observer.disconnect();
       window.removeEventListener("popstate", updateTechnologyFromUrl);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerover", onPointerOver);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
+      window.removeEventListener("pageshow", onPageShow);
       document.body.classList.remove("site-loading");
     };
   }, []);
+
+  // Technology pages replace the homepage in the DOM. Recreate the observer
+  // after each view change so sections restored through browser Back are not
+  // left in their initial, hidden `.reveal` state.
+  useEffect(() => {
+    const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+    // IntersectionObserver callbacks can be delayed after a history restore.
+    // Reveal the currently visible items synchronously on the next frame.
+    const revealFrame = window.requestAnimationFrame(revealVisibleItems);
+    return () => {
+      window.cancelAnimationFrame(revealFrame);
+      observer.disconnect();
+    };
+  }, [activeTechnology]);
 
   const openTechnology = (slug: string) => {
     window.history.pushState({}, "", `/?technology=${slug}`);
