@@ -14,7 +14,7 @@ const Arrow = ({ diagonal = false }: { diagonal?: boolean }) => (
 );
 
 const Brand = ({ compact = false }: { compact?: boolean }) => (
-  <a className={`brand ${compact ? "brand-compact" : ""}`} href="#top" aria-label="Pathivara Tech home">
+  <a className={`brand ${compact ? "brand-compact" : ""}`} href="/#top" aria-label="Pathivara Tech home">
     <span className="brand-mark" aria-hidden="true" />
     <span className="brand-name">Pathivara Tech</span>
   </a>
@@ -62,17 +62,17 @@ function Header() {
           </button>
           <nav className={menuOpen ? "nav open" : "nav"} aria-label="Main navigation">
             {[
-              ["Home", "#top"],
-              ["About", "#about"],
-              ["Services", "#services"],
-              ["Future Tech", "#future"],
-              ["Our Work", "#work"],
+              ["Home", "/#top"],
+              ["About", "/#about"],
+              ["Services", "/#services"],
+              ["Future Tech", "/#future"],
+              ["Our Work", "/#work"],
             ].map(([label, href]) => (
               <a href={href} key={href} onClick={() => setMenuOpen(false)}>
                 {label}
               </a>
             ))}
-            <a className="header-cta" href="#contact" onClick={() => setMenuOpen(false)}>
+            <a className="header-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
               Start your project <Arrow />
             </a>
           </nav>
@@ -290,15 +290,130 @@ function Services() {
   );
 }
 
-const futureTech = [
-  ["AR & VR", "Immersive training, product experiences, virtual tours, and spatial interfaces."],
-  ["AI & Automation", "Smarter workflows, intelligent support, insight, and repetitive-task automation."],
-  ["Blockchain", "Transparent, secure digital records and decentralised application possibilities."],
-  ["Metaverse", "Shared virtual spaces, branded worlds, and interactive digital communities."],
-  ["IoT & Cloud", "Connected devices, real-time data, and scalable infrastructure that works together."],
+const technologyPages = [
+  {
+    slug: "ar-vr",
+    number: "01",
+    title: "AR & VR",
+    label: "Immersive experiences",
+    short: "Immersive training, product experiences, virtual tours, and spatial interfaces.",
+    hero: "Let people understand, practise, and explore something before it is physically in front of them.",
+    simple: "Augmented reality (AR) adds useful digital information to the real world through a phone, tablet, or smart glasses. Virtual reality (VR) places a person inside a computer-made environment using a headset or screen.",
+    analogy: "AR is like looking through a smart window that adds instructions or objects to what you already see. VR is like stepping inside a realistic digital room.",
+    image: "/pathivara-ar-studio.png",
+    businessBenefits: [
+      ["Show products before purchase", "Customers can view furniture in their room, explore a property, or try a product virtually before deciding."],
+      ["Train people safely", "Employees can practise difficult, expensive, or risky tasks without stopping real operations or damaging equipment."],
+      ["Explain complex ideas clearly", "Interactive 3D demonstrations make machinery, buildings, medical concepts, and processes easier to understand."],
+      ["Reach people anywhere", "Virtual tours and showrooms give distant customers a richer experience without requiring physical travel."],
+    ],
+    everyday: [
+      "Preview furniture, colours, or equipment inside a real space.",
+      "Visit a museum, property, classroom, or destination remotely.",
+      "Follow visual repair, assembly, or navigation instructions over the real world.",
+    ],
+    bestFor: ["Real estate and construction", "Education and training", "Retail and e-commerce", "Tourism and events", "Manufacturing and healthcare"],
+    firstStep: "Start with one moment that is hard to explain, expensive to demonstrate, or easier to understand in 3D.",
+  },
+  {
+    slug: "ai-automation",
+    number: "02",
+    title: "AI & Automation",
+    label: "Smarter operations",
+    short: "Smarter workflows, intelligent support, insight, and repetitive-task automation.",
+    hero: "Give your team more time for judgement, relationships, and growth by reducing repetitive digital work.",
+    simple: "Artificial intelligence helps software recognise patterns, understand information, produce useful suggestions, and assist with decisions. Automation connects steps so routine work can happen consistently without someone repeating every click.",
+    analogy: "Think of AI as a fast assistant that can read, sort, draft, and suggest. Automation is the checklist that moves work to the next step. People still set the rules and remain responsible for important decisions.",
+    image: "/pathivara-future-stack.png",
+    businessBenefits: [
+      ["Respond faster", "Answer common questions, organise enquiries, and direct customers or staff to the right information at any hour."],
+      ["Reduce repetitive work", "Move data between systems, prepare routine reports, send reminders, and process standard documents automatically."],
+      ["Find useful patterns", "Turn sales, service, inventory, and operational data into understandable summaries and early warnings."],
+      ["Support better decisions", "Give teams relevant information and recommendations while keeping people in control of final choices."],
+    ],
+    everyday: [
+      "Search large amounts of information using normal questions.",
+      "Receive helpful reminders, summaries, translations, and accessibility support.",
+      "Automate repeated personal tasks such as sorting, scheduling, or organising information.",
+    ],
+    bestFor: ["Customer service", "Sales and marketing", "Finance and administration", "Operations and logistics", "Knowledge-heavy teams"],
+    firstStep: "Choose one frequent task that is slow, repetitive, and easy to check. Improve that workflow before attempting a large AI transformation.",
+  },
+  {
+    slug: "blockchain",
+    number: "03",
+    title: "Blockchain",
+    label: "Shared digital trust",
+    short: "Transparent, secure digital records and decentralised application possibilities.",
+    hero: "Create records that several organisations can verify without depending on one party to secretly control or change the history.",
+    simple: "A blockchain is a shared digital record book. Approved activity is added in order, copied across a network, and made difficult to alter quietly. It is useful when several parties need to trust the same history.",
+    analogy: "Imagine several businesses keeping matching copies of the same numbered receipt book. When a valid new entry is added, everyone receives it. Changing an old entry without the others noticing becomes extremely difficult.",
+    image: "/pathivara-future-stack.png",
+    businessBenefits: [
+      ["Trace products and assets", "Follow an item from origin to customer and give authorised parties a dependable shared history."],
+      ["Verify certificates", "Make qualifications, warranties, tickets, and ownership records easier to check and harder to counterfeit."],
+      ["Coordinate across organisations", "Reduce reconciliation work when suppliers, partners, regulators, and customers need the same records."],
+      ["Automate agreed rules", "Smart contracts can carry out clearly defined digital actions when agreed conditions are met."],
+    ],
+    everyday: [
+      "Check where a product came from and whether its history is genuine.",
+      "Verify a certificate, membership, warranty, or event ticket.",
+      "Transfer certain digital assets or rights without repeatedly reconciling separate records.",
+    ],
+    bestFor: ["Supply chains", "Certificates and credentials", "Multi-party finance", "Digital ownership", "Transparent record systems"],
+    firstStep: "First ask whether several independent parties truly need one shared, tamper-evident record. A normal database is often better when one trusted organisation controls everything.",
+  },
+  {
+    slug: "metaverse",
+    number: "04",
+    title: "Metaverse",
+    label: "Shared virtual spaces",
+    short: "Shared virtual spaces, branded worlds, and interactive digital communities.",
+    hero: "Bring people together inside interactive digital spaces for learning, events, collaboration, shopping, and community.",
+    simple: "The metaverse describes shared digital spaces where people can enter as themselves or an avatar, move around, interact with content, and meet others. It can work through a browser, phone, computer, or VR headset.",
+    analogy: "Think of it as a website you can walk through together instead of pages you only scroll through. It does not replace the real world; it gives remote people a more spatial and social way to participate.",
+    image: "/pathivara-vr-hero.png",
+    businessBenefits: [
+      ["Create memorable events", "Host launches, exhibitions, conferences, and community experiences that people can join from anywhere."],
+      ["Build virtual showrooms", "Let customers explore products, spaces, and brand stories in an interactive environment."],
+      ["Collaborate remotely", "Give distributed teams a shared visual space for workshops, training, planning, and simulation."],
+      ["Grow digital communities", "Create places where members can meet, participate, unlock content, and return for new experiences."],
+    ],
+    everyday: [
+      "Attend remote events with a stronger feeling of presence.",
+      "Learn and practise with other people inside interactive environments.",
+      "Meet communities, play, create, and explore shared digital spaces.",
+    ],
+    bestFor: ["Events and entertainment", "Brands and retail", "Education and training", "Remote collaboration", "Communities and tourism"],
+    firstStep: "Define why people should enter the space and what useful action they can take there. A meaningful experience matters more than simply creating a 3D world.",
+  },
+  {
+    slug: "iot-cloud",
+    number: "05",
+    title: "IoT & Cloud",
+    label: "Connected intelligence",
+    short: "Connected devices, real-time data, and scalable infrastructure that works together.",
+    hero: "Know what is happening across equipment, buildings, vehicles, products, or environments—even when nobody is standing beside them.",
+    simple: "The Internet of Things (IoT) connects physical objects such as sensors, machines, vehicles, meters, and appliances to software. Cloud technology securely stores and processes their information so it can be viewed and used from anywhere.",
+    analogy: "A sensor is like the eyes and ears, the internet is the messenger, and the cloud is the control room. Together they can notice a change, record it, alert someone, or trigger an approved action.",
+    image: "/concept-mobile.png",
+    businessBenefits: [
+      ["See operations in real time", "Monitor temperature, location, energy, equipment, stock, or environmental conditions from one dashboard."],
+      ["Prevent costly problems", "Receive early warnings when a machine, cold room, vehicle, or building moves outside safe conditions."],
+      ["Use resources efficiently", "Understand energy, water, fuel, and equipment usage so waste can be reduced."],
+      ["Deliver connected services", "Offer customers remote control, automatic updates, usage insights, and faster support for connected products."],
+    ],
+    everyday: [
+      "Control lights, security, temperature, and appliances remotely.",
+      "Use wearables to understand activity, location, or health-related measurements.",
+      "Receive alerts about vehicles, deliveries, air quality, leaks, or equipment.",
+    ],
+    bestFor: ["Manufacturing and maintenance", "Agriculture and cold chains", "Logistics and fleets", "Smart buildings and energy", "Connected consumer products"],
+    firstStep: "Choose one physical condition you need to see or control remotely. Test a few devices, prove the value, and then expand securely.",
+  },
 ];
 
-function FutureTech() {
+function FutureTech({ onSelect }: { onSelect: (slug: string) => void }) {
   return (
     <section className="section future-section" id="future">
       <div className="future-grid-shell shell">
@@ -310,12 +425,21 @@ function FutureTech() {
             light
           />
           <div className="future-list">
-            {futureTech.map(([title, copy], index) => (
-              <article className="future-item reveal reveal-right" style={{ "--delay": `${index * 70}ms` } as React.CSSProperties} key={title}>
-                <span>0{index + 1}</span>
-                <div><h3>{title}</h3><p>{copy}</p></div>
+            {technologyPages.map((technology, index) => (
+              <a
+                className="future-item reveal reveal-right"
+                href={`/?technology=${technology.slug}`}
+                key={technology.slug}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onSelect(technology.slug);
+                }}
+                style={{ "--delay": `${index * 70}ms` } as React.CSSProperties}
+              >
+                <span>{technology.number}</span>
+                <div><h3>{technology.title}</h3><p>{technology.short}</p></div>
                 <Arrow diagonal />
-              </article>
+              </a>
             ))}
           </div>
         </div>
@@ -329,6 +453,148 @@ function FutureTech() {
         </div>
       </div>
     </section>
+  );
+}
+
+type Technology = (typeof technologyPages)[number];
+
+function TechnologyPage({
+  technology,
+  onBack,
+}: {
+  technology: Technology;
+  onBack: () => void;
+}) {
+  return (
+    <>
+      <Header />
+      <section className="technology-hero" id="top">
+        <div className="technology-grid-bg" aria-hidden="true" />
+        <div className="shell technology-hero-layout">
+          <div className="technology-hero-copy">
+            <a
+              className="technology-back"
+              href="/#future"
+              onClick={(event) => {
+                event.preventDefault();
+                onBack();
+              }}
+            >
+              <span>←</span> All future technologies
+            </a>
+            <p className="section-label section-label-light">
+              <span /> Technology {technology.number} · {technology.label}
+            </p>
+            <h1>{technology.title}</h1>
+            <p className="technology-hero-lede">{technology.hero}</p>
+            <div className="technology-hero-actions">
+              <a className="button button-coral" href="/#contact">
+                Explore a project <Arrow />
+              </a>
+              <a className="technology-jump" href="#simple-explanation">
+                Understand it simply <span>↓</span>
+              </a>
+            </div>
+          </div>
+          <div className="technology-hero-visual">
+            <img src={technology.image} alt={`${technology.title} technology experience`} />
+            <span className="technology-visual-grid" aria-hidden="true" />
+            <div className="technology-signal signal-a"><i /> BUSINESS VALUE</div>
+            <div className="technology-signal signal-b"><i /> HUMAN FRIENDLY</div>
+            <div className="technology-signal signal-c"><i /> FUTURE READY</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-simple" id="simple-explanation">
+        <div className="shell technology-simple-grid">
+          <div>
+            <p className="section-label"><span /> In simple words</p>
+            <h2>What is {technology.title}?</h2>
+          </div>
+          <div className="technology-explanation">
+            <p>{technology.simple}</p>
+            <aside>
+              <span>Think of it like this</span>
+              <p>{technology.analogy}</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-benefits">
+        <div className="shell">
+          <div className="technology-section-heading">
+            <div>
+              <p className="section-label"><span /> Business value</p>
+              <h2>How it can improve a business.</h2>
+            </div>
+            <p>
+              The right technology should remove friction, improve understanding,
+              or create measurable value—not exist only because it is new.
+            </p>
+          </div>
+          <div className="technology-benefit-grid">
+            {technology.businessBenefits.map(([title, copy], index) => (
+              <article key={title}>
+                <span>0{index + 1}</span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-life">
+        <div className="shell technology-life-grid">
+          <div className="technology-life-copy">
+            <p className="section-label section-label-light"><span /> Everyday impact</p>
+            <h2>How it can make daily life easier.</h2>
+            <p>
+              People do not need to understand the technical system behind the
+              experience. They should simply feel that something became clearer,
+              faster, safer, or more convenient.
+            </p>
+          </div>
+          <div className="technology-life-list">
+            {technology.everyday.map((item, index) => (
+              <div key={item}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <p>{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section technology-fit">
+        <div className="shell technology-fit-grid">
+          <div>
+            <p className="section-label"><span /> Where it fits</p>
+            <h2>Useful industries and situations.</h2>
+            <div className="technology-tags">
+              {technology.bestFor.map((item) => <span key={item}>{item}</span>)}
+            </div>
+          </div>
+          <aside className="technology-first-step">
+            <span>THE PRACTICAL FIRST STEP</span>
+            <h3>Start with a real problem, then choose the technology.</h3>
+            <p>{technology.firstStep}</p>
+            <a href="/#contact">Discuss the opportunity <Arrow /></a>
+          </aside>
+        </div>
+      </section>
+
+      <section className="technology-page-cta">
+        <div className="shell">
+          <p>Have a challenge that {technology.title} might solve?</p>
+          <h2>Let&apos;s turn the idea into a useful first step.</h2>
+          <a className="button button-coral" href="/#contact">Start a conversation <Arrow /></a>
+        </div>
+      </section>
+      <Footer />
+    </>
   );
 }
 
@@ -543,10 +809,10 @@ function Footer() {
           <p>From digital foundations to immersive futures.</p>
         </div>
         <div className="footer-links">
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#future">Future Tech</a>
-          <a href="#work">Our Work</a>
+          <a href="/#about">About</a>
+          <a href="/#services">Services</a>
+          <a href="/#future">Future Tech</a>
+          <a href="/#work">Our Work</a>
         </div>
       </div>
       <div className="shell footer-bottom">
@@ -559,10 +825,21 @@ function Footer() {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [activeTechnology, setActiveTechnology] = useState<string | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const updateTechnologyFromUrl = () => {
+      const slug = new URLSearchParams(window.location.search).get("technology");
+      const isValid = technologyPages.some((technology) => technology.slug === slug);
+      setActiveTechnology(isValid ? slug : null);
+      window.scrollTo({ top: 0, behavior: "auto" });
+    };
+
+    updateTechnologyFromUrl();
+    window.addEventListener("popstate", updateTechnologyFromUrl);
+
     document.body.classList.add("site-loading");
     const loaderTimer = window.setTimeout(() => {
       setLoading(false);
@@ -592,38 +869,78 @@ export default function App() {
 
     const onPointerMove = (event: PointerEvent) => {
       if (!cursorRef.current) return;
-      cursorRef.current.style.transform = `translate3d(${event.clientX - 10}px, ${event.clientY - 10}px, 0)`;
+      cursorRef.current.classList.add("cursor-visible");
+      cursorRef.current.style.transform = `translate3d(${event.clientX - 17}px, ${event.clientY - 19}px, 0)`;
+    };
+
+    const onPointerOver = (event: PointerEvent) => {
+      if (!cursorRef.current || !(event.target instanceof Element)) return;
+      const interactive = event.target.closest("a, button, input, textarea, select, [role='button']");
+      cursorRef.current.classList.toggle("cursor-active", Boolean(interactive));
+    };
+
+    const onPointerLeave = () => {
+      cursorRef.current?.classList.remove("cursor-visible");
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.addEventListener("pointerover", onPointerOver, { passive: true });
+    document.documentElement.addEventListener("mouseleave", onPointerLeave);
     onScroll();
 
     return () => {
       window.clearTimeout(loaderTimer);
       observer.disconnect();
+      window.removeEventListener("popstate", updateTechnologyFromUrl);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerover", onPointerOver);
+      document.documentElement.removeEventListener("mouseleave", onPointerLeave);
       document.body.classList.remove("site-loading");
     };
   }, []);
+
+  const openTechnology = (slug: string) => {
+    window.history.pushState({}, "", `/?technology=${slug}`);
+    setActiveTechnology(slug);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const closeTechnology = () => {
+    window.history.pushState({}, "", "/#future");
+    setActiveTechnology(null);
+    window.setTimeout(() => {
+      document.getElementById("future")?.scrollIntoView({ behavior: "smooth" });
+    }, 0);
+  };
+
+  const selectedTechnology = technologyPages.find(
+    (technology) => technology.slug === activeTechnology,
+  );
 
   return (
     <main>
       <Preloader loading={loading} />
       <div className="scroll-progress" ref={progressRef} />
-      <div className="custom-cursor" ref={cursorRef} aria-hidden="true" />
-      <Header />
-      <Hero />
-      <Marquee />
-      <About />
-      <Services />
-      <FutureTech />
-      <Work />
-      <Metrics />
-      <Process />
-      <Contact />
-      <Footer />
+      <div className="custom-cursor" ref={cursorRef} aria-hidden="true"><span /></div>
+      {selectedTechnology ? (
+        <TechnologyPage technology={selectedTechnology} onBack={closeTechnology} />
+      ) : (
+        <>
+          <Header />
+          <Hero />
+          <Marquee />
+          <About />
+          <Services />
+          <FutureTech onSelect={openTechnology} />
+          <Work />
+          <Metrics />
+          <Process />
+          <Contact />
+          <Footer />
+        </>
+      )}
     </main>
   );
 }
