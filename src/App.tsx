@@ -41,6 +41,12 @@ function revealVisibleItems() {
   });
 }
 
+function revealAllItems() {
+  document.querySelectorAll<HTMLElement>(".reveal").forEach((item) => {
+    item.classList.add("visible");
+  });
+}
+
 function scrollToSection(event: React.MouseEvent<HTMLAnchorElement>, sectionId: string) {
   event.preventDefault();
 
@@ -1118,9 +1124,10 @@ export default function App() {
   const [activeService, setActiveService] = useState<string | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const shouldRevealRestoredHomeRef = useRef(false);
 
   useEffect(() => {
-    const updatePageFromUrl = () => {
+    const updatePageFromUrl = (fromHistory = false) => {
       const parameters = new URLSearchParams(window.location.search);
       const technologySlug = parameters.get("technology");
       const serviceSlug = parameters.get("service");
@@ -1129,13 +1136,18 @@ export default function App() {
       );
       const validService = servicePages.some((service) => service.slug === serviceSlug);
 
+      if (fromHistory && !validTechnology && !validService) {
+        shouldRevealRestoredHomeRef.current = true;
+      }
+
       setActiveTechnology(validTechnology ? technologySlug : null);
       setActiveService(!validTechnology && validService ? serviceSlug : null);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
 
     updatePageFromUrl();
-    window.addEventListener("popstate", updatePageFromUrl);
+    const onPopState = () => updatePageFromUrl(true);
+    window.addEventListener("popstate", onPopState);
 
     document.body.classList.add("site-loading");
     const loaderTimer = window.setTimeout(() => {
@@ -1175,14 +1187,14 @@ export default function App() {
     // remounting React. Restore visible sections instead of leaving them in
     // their initial hidden reveal state.
     const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) window.requestAnimationFrame(revealVisibleItems);
+      if (event.persisted) window.requestAnimationFrame(revealAllItems);
     };
     window.addEventListener("pageshow", onPageShow);
     onScroll();
 
     return () => {
       window.clearTimeout(loaderTimer);
-      window.removeEventListener("popstate", updatePageFromUrl);
+      window.removeEventListener("popstate", onPopState);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerover", onPointerOver);
@@ -1197,6 +1209,17 @@ export default function App() {
   // correctly after browser Back navigation.
   useEffect(() => {
     const revealItems = document.querySelectorAll<HTMLElement>(".reveal");
+
+    if (
+      shouldRevealRestoredHomeRef.current
+      && !activeTechnology
+      && !activeService
+    ) {
+      revealAllItems();
+      shouldRevealRestoredHomeRef.current = false;
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -1227,6 +1250,7 @@ export default function App() {
 
   const closeTechnology = () => {
     window.history.pushState({}, "", "/#future");
+    shouldRevealRestoredHomeRef.current = true;
     setActiveTechnology(null);
     window.setTimeout(() => {
       document.getElementById("future")?.scrollIntoView({ behavior: "smooth" });
@@ -1246,6 +1270,7 @@ export default function App() {
 
   const closeService = () => {
     window.history.pushState({}, "", "/#services");
+    shouldRevealRestoredHomeRef.current = true;
     setActiveService(null);
     window.setTimeout(() => {
       document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
